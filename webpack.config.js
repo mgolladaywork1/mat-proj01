@@ -8,8 +8,8 @@ const autoprefixer = require('autoprefixer');
 const postcssUrl = require('postcss-url');
 const postcssImports = require('postcss-import');
 
-const { NoEmitOnErrorPlugin, SourceMapDevToolPlugin, NamedModulesPlugin }= require('webpack');
-const { NamedLazyChunksWebpackPlugin, BaseHrefWebpackPlugin, PostcssCliResources }= require('@angular/cli/plugins/webpack');
+const { NoEmitOnErrorsPlugin, SourceMapDevToolPlugin, NamedModulesPlugin } = require('webpack');
+const { NamedLazyChunksWebpackPlugin, BaseHrefWebpackPlugin, PostcssCliResources } = require('@angular/cli/plugins/webpack');
 const { CommonsChunkPlugin } = require('webpack').optimize;
 const { AngularCompilerPlugin } = require('@ngtools/webpack');
 
@@ -25,16 +25,16 @@ const maximumInlineSize = 10;
 const postcssPlugins = function (loader) {
         return [
             postcssImports({
-                resolove: (url, context) => {
+                resolve: (url, context) => {
                     return new Promise((resolve, reject) => {
-                        let hadTitde = false;
+                        let hadTilde = false;
                         if (url && url.startsWith('~')) {
                             url = url.substr(1);
                             hadTilde = true;
                         }
-                        loader.resolve(context, (hadTitde ? '' : './') + url, (err, result) => {
-                            if (err){
-                                if (hadTitde) {
+                        loader.resolve(context, (hadTilde ? '' : './') + url, (err, result) => {
+                            if (err) {
+                                if (hadTilde) {
                                     reject(err);
                                     return;
                                 }
@@ -75,17 +75,17 @@ const postcssPlugins = function (loader) {
             }),
             postcssUrl([
                 {
-                    //Only convert root relative URLs, which CSS-Loader won't process into require().
+                    // Only convert root relative URLs, which CSS-Loader won't process into require().
                     filter: ({ url }) => url.startsWith('/') && !url.startsWith('//'),
                     url: ({ url }) => {
                         if (deployUrl.match(/:\/\//) || deployUrl.startsWith('/')) {
-                            //If deployUrl is absolute or root relative, ignore baseHref & use deployUrl as is.
+                            // If deployUrl is absolute or root relative, ignore baseHref & use deployUrl as is.
                             return `${deployUrl.replace(/\/$/, '')}${url}`;
                         }
                         else if (baseHref.match(/:\/\//)) {
                             // If baseHref contains a scheme, include it as is.
                             return baseHref.replace(/\/$/, '') +
-                            `/${deployUrl}/${url}`.replace(/\/\/+/g, '/');
+                                `/${deployUrl}/${url}`.replace(/\/\/+/g, '/');
                         }
                         else {
                             // Join together base-href, deploy-url and the original URL.
@@ -113,11 +113,13 @@ const postcssPlugins = function (loader) {
             }),
             autoprefixer({ grid: true }),
         ];
-};
+    };
+
+
 
 
 module.exports = {
-  "resolve" : {
+  "resolve": {
     "extensions": [
       ".ts",
       ".js"
@@ -138,7 +140,7 @@ module.exports = {
     "modules": [
       "./node_modules"
     ],
-    "alias": rsPaths()
+    "alias": rxPaths()
   },
   "entry": {
     "main": [
@@ -154,7 +156,7 @@ module.exports = {
   "output": {
     "path": path.join(process.cwd(), "dist"),
     "filename": "[name].bundle.js",
-    "chunckFilename": "[id].chunk.js",
+    "chunkFilename": "[id].chunk.js",
     "crossOriginLoading": false
   },
   "module": {
@@ -262,9 +264,9 @@ module.exports = {
           {
             "loader": "postcss-loader",
             "options": {
-            "ident": "embedded",
-            "plugins": postcssPlugins,
-            "sourceMap": true
+              "ident": "embedded",
+              "plugins": postcssPlugins,
+              "sourceMap": true
             }
           },
           {
@@ -284,7 +286,7 @@ module.exports = {
         "use": [
           "style-loader",
           {
-            "loader": "raw-loader",
+            "loader": "raw-loader"
           },
           {
             "loader": "postcss-loader",
@@ -428,21 +430,21 @@ module.exports = {
       "cache": true,
       "showErrors": true,
       "chunks": "all",
-      "excludeChunk": [],
-      "title": "webpack App",
+      "excludeChunks": [],
+      "title": "Webpack App",
       "xhtml": true,
       "chunksSortMode": function sort(left, right) {
         let leftIndex = entryPoints.indexOf(left.names[0]);
         let rightindex = entryPoints.indexOf(right.names[0]);
         if (leftIndex > rightindex) {
-          return 1;
+            return 1;
         }
         else if (leftIndex < rightindex) {
-          return -1;
+            return -1;
         }
         else {
-          return 0;
-        }
+            return 0;
+        }  
       }
     }),
     new BaseHrefWebpackPlugin({}),
@@ -457,11 +459,11 @@ module.exports = {
         "vendor"
       ],
       "minChunks": (module) => {
-        return module.resource
-          && (module.resource.startsWith(nodeModules)
-              || module.resource.startsWith(getDirNodeModules)
-              || module.resource.startsWith(realNodeModules));
-      },
+                return module.resource
+                    && (module.resource.startsWith(nodeModules)
+                        || module.resource.startsWith(genDirNodeModules)
+                        || module.resource.startsWith(realNodeModules));
+            },
       "chunks": [
         "main"
       ]
@@ -486,7 +488,7 @@ module.exports = {
       "hostReplacementPaths": {
         "environments\\environment.ts": "environments\\environment.ts"
       },
-      "souceMap": true,
+      "sourceMap": true,
       "tsConfigPath": "src\\tsconfig.app.json",
       "skipCodeGeneration": true,
       "compilerOptions": {}
