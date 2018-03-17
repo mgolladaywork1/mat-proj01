@@ -16,7 +16,9 @@
   },
   "homepage": "https://github.com/mgolladaywork1/mat-proj01#readme",
   "devDependencies": {
+    "clean-webpack-plugin": "^0.1.19",
     "css-loader": "^0.28.10",
+    "html-webpack-plugin": "^3.0.6",
     "style-loader": "^0.20.3",
     "webpack": "^4.1.1",
     "webpack-cli": "^2.0.11"
